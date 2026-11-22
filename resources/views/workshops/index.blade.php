@@ -1,3 +1,5 @@
+{{-- Workshops index page: lists all workshops using the workshop-card component --}}
+
 @extends('layouts.app')
 
 @section('title', 'All Workshops - SkillHub Portal')
