@@ -58,10 +58,25 @@ class WorkshopController extends Controller
         return view('home', compact('featuredWorkshops'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $workshops = $this->getWorkshops();
-        return view('workshops.index', compact('workshops'));
+        $allWorkshops = $this->getWorkshops();
+
+        $categories = array_unique(array_column($allWorkshops, 'category'));
+        $selectedCategory = $request->query('category');
+
+        $stats = [
+            'total' => count($allWorkshops),
+            'seats' => array_sum(array_column($allWorkshops, 'seats')),
+            'full' => count(array_filter($allWorkshops, fn($w) => $w['seats'] <= 0)),
+            'categories' => count($categories),
+        ];
+
+        $workshops = $selectedCategory
+            ? array_filter($allWorkshops, fn($w) => $w['category'] === $selectedCategory)
+            : $allWorkshops;
+
+        return view('workshops.index', compact('workshops', 'stats', 'categories', 'selectedCategory'));
     }
 
     public function show($id)
